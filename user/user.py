@@ -33,15 +33,7 @@ def get_users():
     return response
 
 
-@app.route("/users/<userid>", methods=['GET'])
-def get_user_byid(userid):
-    for user in users:
-        if str(user['id']) == str(userid):
-            return make_response(jsonify(user), 200)
-    return make_response(jsonify({'error': 'User not found', "id": userid}), 404)
-
-
-@app.route("/users/", methods=['POST'])
+@app.route("/users", methods=['POST'])
 def add_user():
     req = request.get_json()
 
@@ -53,6 +45,14 @@ def add_user():
     write(users)
 
     return make_response(jsonify({"message": "user added"}, req), 200)
+
+
+@app.route("/users/<userid>", methods=['GET'])
+def get_user_byid(userid):
+    for user in users:
+        if str(user['id']) == str(userid):
+            return make_response(jsonify(user), 200)
+    return make_response(jsonify({'error': 'User not found', "id": userid}), 404)
 
 
 #Voir pour une meilleure gestion des erreurs
@@ -68,11 +68,13 @@ def update_user_byid(userid):
             return make_response(jsonify({"message": "user updated"},req), 200)
     return make_response(jsonify({'error': 'User not found', "id": userid}), 404)
 
+
 @app.route("/users/<userid>", methods=['DELETE'])
 def del_user_byid(userid):
     for user in users:
         if str(user["id"]) == str(userid):
             users.remove(user)
+            write(users)
             return make_response(jsonify({"message": "user deleted"}, user),200)
 
     res = make_response(jsonify({"error":"user ID not found", "id": userid}),400)
@@ -102,7 +104,6 @@ def get_user_bookings(userid):
                 return make_response(jsonify({"bookings": bookings}), 200)
             except requests.RequestException as e:
                 return make_response(jsonify({"error": "Error contacting Booking service", "details": str(e)}), 500)
-
     return
 
 
@@ -135,9 +136,7 @@ def get_user_bookings_movies(userid):
                 return make_response(jsonify({"bookings": bookings_with_movies}), 200)
             except requests.RequestException as e:
                 return make_response(jsonify({"error": "Error contacting Booking service", "details": str(e)}), 500)
-
     return
-
 
 
 @app.route("/help", methods=['GET'])
