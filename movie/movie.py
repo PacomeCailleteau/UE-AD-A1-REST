@@ -61,7 +61,7 @@ def get_movie_bytitle():
     return res
 
 @app.route("/moviesbydirector", methods=['GET'])
-def get_movie_bydirector():
+def get_movies_bydirector():
     director_movies = []
 
     if request.args:
