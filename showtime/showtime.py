@@ -22,6 +22,7 @@ def get_schedules():
     res = make_response(json, 200)
     return res
 
+
 @app.route("/showmovies/<date>", methods=['GET'])
 def get_schedules_from_date(date):
     json = ""
@@ -31,7 +32,7 @@ def get_schedules_from_date(date):
 
     if not json:
         res = make_response({"error": "bad input parameter"}, 400)
-    else :
+    else:
         res = make_response(jsonify(json), 200)
     return res
 

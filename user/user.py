@@ -21,6 +21,7 @@ with open('{}/databases/users.json'.format("."), "r") as jsf:
 with open("UE-archi-distribuees-User-1.0.0-resolved.yaml", "r") as f:
     openapi_spec = yaml.safe_load(f)
 
+
 @app.route("/", methods=['GET'])
 def home():
     return "<h1 style='color:blue'>Welcome to the User service!</h1>"
@@ -55,7 +56,7 @@ def get_user_byid(userid):
     return make_response(jsonify({'error': 'User not found', "id": userid}), 404)
 
 
-#Voir pour une meilleure gestion des erreurs
+# Voir pour une meilleure gestion des erreurs
 @app.route("/users/<userid>", methods=['PUT'])
 def update_user_byid(userid):
     req = request.get_json()
@@ -65,7 +66,7 @@ def update_user_byid(userid):
             users.remove(user)
             users.append(req)
             write(users)
-            return make_response(jsonify({"message": "user updated"},req), 200)
+            return make_response(jsonify({"message": "user updated"}, req), 200)
     return make_response(jsonify({'error': 'User not found', "id": userid}), 404)
 
 
@@ -75,9 +76,9 @@ def del_user_byid(userid):
         if str(user["id"]) == str(userid):
             users.remove(user)
             write(users)
-            return make_response(jsonify({"message": "user deleted"}, user),200)
+            return make_response(jsonify({"message": "user deleted"}, user), 200)
 
-    res = make_response(jsonify({"error":"user ID not found", "id": userid}),400)
+    res = make_response(jsonify({"error": "user ID not found", "id": userid}), 400)
     return res
 
 

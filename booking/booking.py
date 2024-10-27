@@ -16,11 +16,13 @@ with open('{}/databases/bookings.json'.format("."), "r") as jsf:
 def home():
     return "<h1 style='color:blue'>Welcome to the Booking service!</h1>"
 
+
 @app.route("/bookings", methods=['GET'])
 def get_bookings():
     json = jsonify(bookings)
     response = make_response(json, 200)
     return response
+
 
 @app.route("/bookings/<userid>", methods=['GET'])
 def get_booking_from_userid(userid):
@@ -30,10 +32,11 @@ def get_booking_from_userid(userid):
             json = booking
 
     if not json:
-        response = make_response(jsonify({"error" : "bad input parameter"}), 400)
-    else :
+        response = make_response(jsonify({"error": "bad input parameter"}), 400)
+    else:
         response = make_response(jsonify(json), 200)
     return response
+
 
 @app.route("/bookings/<userid>", methods=['POST'])
 def add_booking_to_user(userid):
@@ -51,7 +54,7 @@ def add_booking_to_user(userid):
     ## ajout dans la base
     for booking in bookings:
         if booking['userid'] == userid:
-            #si la date n'existe pas alors on la crée
+            # si la date n'existe pas alors on la crée
             if not any(date['date'] == req['date'] for date in booking['dates']):
                 booking['dates'].append({'date': req['date'], 'movies': [req['movieid']]})
                 write(bookings)
@@ -67,11 +70,11 @@ def add_booking_to_user(userid):
 
     return make_response("an existing item already exists", 400)
 
+
 def write(bookings):
     data = {"bookings": bookings}
     with open('./databases/bookings.json', 'w') as f:
         json.dump(data, f, indent=2)
-
 
 
 if __name__ == "__main__":
