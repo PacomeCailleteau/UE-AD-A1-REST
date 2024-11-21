@@ -76,7 +76,6 @@ def del_user_byid(userid):
 # Retourne les utilisateurs triés par date de dernière activité.
 @app.route("/users/bylastactive", methods=['GET'])
 def get_user_bylastactive():
-    json = jsonify(users)
     sorted_users_bylastactive = sorted(users, key=lambda user: user.get("last_active", 0))
     response = make_response(sorted_users_bylastactive, 200)
     return response
@@ -87,6 +86,8 @@ def get_user_bookings(userid):
     for user in users:
         if str(user["id"]) == str(userid):
             try:
+                # appelle à l'API booking pour récupérer les bookings de l'utilisateur
+                # dans un try catch pour gérer les erreurs liées à l'appel de l'API
                 response = requests.get(f"{BOOKING_SERVICE_URL}{userid}")
                 if response.status_code != 200:
                     return make_response(jsonify({"error": "item not found"}), 400)
@@ -104,6 +105,8 @@ def get_user_bookings_movies(userid):
     for user in users:
         if str(user["id"]) == str(userid):
             try:
+                # appelle à l'API booking pour récupérer les bookings de l'utilisateur
+                # dans un try catch pour gérer les erreurs liées à l'appel de l'API de booking
                 response_bookings = requests.get(f"{BOOKING_SERVICE_URL}{userid}")
                 if response_bookings.status_code != 200:
                     return make_response(jsonify({"error": "item not found"}), 400)
@@ -113,6 +116,9 @@ def get_user_bookings_movies(userid):
                 try:
                     for booking in bookings['dates']:
                         movie_booked = booking['movies'][0]
+                        # appelle à l'API movie pour récupérer les infos du film
+                        # dans un second try catch pour gérer les erreurs liées à l'appel de l'API de movie
+                        #comme ça on peut savoir quelle API a généré l'erreur
                         response_movie = requests.get(f"{MOVIE_SERVICE_URL}{movie_booked}")
                         if response_movie.status_code != 200:
                             return make_response(jsonify({"error": "Movie not found"}), 400)
@@ -135,6 +141,10 @@ def get_help():
     paths = openapi_spec.get("paths", {})
     help_info = []
 
+    # path correspond à l'url de l'endpoint
+    # path_data correspond aux données de l'endpoint
+    # method correspond à la méthode de l'endpoint (GET, POST, PUT, DELETE)
+    # method_data correspond aux données de la méthode (summary, description)
     for path, path_data in paths.items():
         for method, method_data in path_data.items():
             help_info.append({
