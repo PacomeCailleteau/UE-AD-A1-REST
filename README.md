@@ -45,5 +45,6 @@ Les microservices lancés sont les suivants :
 - [User](http://localhost:3203)
 
 Chaque microservice contient un fichier .yaml contenant la documentation de l'API.
-L'endpoint [/help](http://localhost:3203/help) de User permet de voir les différentes routes disponibles pour ce microservice.
+L'endpoint [/help](http://localhost:3203/help) de User permet de voir les différentes routes disponibles pour ce microservice.  
+L'endpoint [/help](http://localhost:3200/help) de Movie permet de voir les différentes routes disponibles pour ce microservice.
 
