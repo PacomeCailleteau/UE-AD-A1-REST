@@ -213,23 +213,23 @@ paths:
           description: item deleted
         "400":
           description: ID not found
-  /moviesbytitle:
+  /moviebytitle:
     get:
       tags:
-      - developers
+        - developers
       summary: get the movie by its title
       description: |
         By passing in the appropriate options, you can get Movie info
       operationId: get_movie_bytitle
       parameters:
-      - name: title
-        in: query
-        description: pass a title
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
+        - name: title
+          in: query
+          description: pass a title
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
       responses:
         "200":
           description: Movie item
@@ -339,7 +339,7 @@ paths:
                     - url: "/movies/{movieid}"
                       method: "GET"
                       summary: "Get a movie by its ID"
-                    - url: "/moviesbytitle"
+                    - url: "/moviebytitle"
                       method: "GET"
                       summary: "Get a movie by its title"
                     - url: "/moviesbydirector"

@@ -1,7 +1,6 @@
-from flask import Flask, render_template, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response
 import requests
 import json
-from werkzeug.exceptions import NotFound
 
 app = Flask(__name__)
 
@@ -16,12 +15,14 @@ with open('{}/databases/bookings.json'.format("."), "r") as jsf:
 def home():
     return "<h1 style='color:blue'>Welcome to the Booking service!</h1>"
 
+# Retourne la liste des réservations au format JSON.
 @app.route("/bookings", methods=['GET'])
 def get_bookings():
     json = jsonify(bookings)
     response = make_response(json, 200)
     return response
 
+# Retourne les réservations pour un utilisateur donné par son ID.
 @app.route("/bookings/<userid>", methods=['GET'])
 def get_booking_from_userid(userid):
     json = ""
@@ -35,6 +36,7 @@ def get_booking_from_userid(userid):
         response = make_response(jsonify(json), 200)
     return response
 
+# Ajoute une réservation pour un utilisateur donné.
 @app.route("/bookings/<userid>", methods=['POST'])
 def add_booking_to_user(userid):
     req = request.get_json()
@@ -75,5 +77,5 @@ def write(bookings):
 
 
 if __name__ == "__main__":
-    print("Server running in port %s" % (PORT))
+    print("Server running in port %s" % PORT)
     app.run(host=HOST, port=PORT)

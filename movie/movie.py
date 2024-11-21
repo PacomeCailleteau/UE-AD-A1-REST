@@ -1,8 +1,6 @@
-from flask import Flask, render_template, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response
 import json
 import yaml
-import sys
-from werkzeug.exceptions import NotFound
 
 app = Flask(__name__)
 
@@ -17,19 +15,22 @@ with open('{}/databases/movies.json'.format("."), 'r') as jsf:
 def home():
     return make_response("<h1 style='color:blue'>Welcome to the Movie service!</h1>",200)
 
+# Retourne la liste des films au format JSON.
 @app.route("/json", methods=['GET'])
 def get_json():
     res = make_response(jsonify(movies), 200)
     return res
 
+# Retourne les détails d'un film correspondant à l'ID donné.
 @app.route("/movies/<movieid>", methods=['GET'])
-def get_movie_byid(movieid):
+def get_movie_by_id(movieid):
     for movie in movies:
         if str(movie["id"]) == str(movieid):
             res = make_response(jsonify(movie),200)
             return res
     return make_response(jsonify({"error":"Movie ID not found"}),400)
 
+# Retourne les films triés par note selon un ordre spécifié ('best' ou 'worst').
 @app.route("/movies/rate", methods=['GET'])
 def get_movies_by_rate():
     rate_order = request.args.get('rate', '')
@@ -44,9 +45,9 @@ def get_movies_by_rate():
     res = make_response(jsonify(sorted_movies), 200)
     return res
 
-
-@app.route("/moviesbytitle", methods=['GET'])
-def get_movie_bytitle():
+# Recherche un film par son titre et retourne ses détails.
+@app.route("/moviebytitle", methods=['GET'])
+def get_movie_by_title():
     json = ""
     if request.args:
         req = request.args
@@ -60,8 +61,9 @@ def get_movie_bytitle():
         res = make_response(jsonify(json),200)
     return res
 
+# Retourne la liste des films réalisés par un certain réalisateur.
 @app.route("/moviesbydirector", methods=['GET'])
-def get_movies_bydirector():
+def get_movies_by_director():
     director_movies = []
 
     if request.args:
@@ -77,6 +79,7 @@ def get_movies_bydirector():
 
     return res
 
+# Ajoute un nouveau film si l'ID n'existe pas déjà.
 @app.route("/addmovie/<movieid>", methods=['POST'])
 def add_movie(movieid):
     req = request.get_json()
@@ -90,11 +93,7 @@ def add_movie(movieid):
     res = make_response(jsonify({"message":"movie added"}),200)
     return res
 
-def write(movies):
-    data = {"movies": movies}
-    with open('./databases/movies.json', 'w') as f:
-        json.dump(data, f, indent=4)
-
+# Met à jour la note d'un film existant par son ID.
 @app.route("/movies/<movieid>/<rate>", methods=['PUT'])
 def update_movie_rating(movieid, rate):
     for movie in movies:
@@ -109,6 +108,18 @@ def update_movie_rating(movieid, rate):
 with open("UE-archi-distribuees-Movie-1.0.0-resolved.yaml", "r") as f:
     openapi_spec = yaml.safe_load(f)
 
+# Supprime un film par son ID et retourne ses détails.
+@app.route("/movies/<movieid>", methods=['DELETE'])
+def del_movie(movieid):
+    for movie in movies:
+        if str(movie["id"]) == str(movieid):
+            movies.remove(movie)
+            return make_response(jsonify(movie),200)
+
+    res = make_response(jsonify({"error":"movie ID not found"}),400)
+    return res
+
+# Retourne une liste d'aide générée à partir du fichier OpenAPI.
 @app.route("/help", methods=['GET'])
 def get_help():
     paths = openapi_spec.get("paths", {})
@@ -124,17 +135,13 @@ def get_help():
             })
     return jsonify({"endpoints": help_info})
 
-@app.route("/movies/<movieid>", methods=['DELETE'])
-def del_movie(movieid):
-    for movie in movies:
-        if str(movie["id"]) == str(movieid):
-            movies.remove(movie)
-            return make_response(jsonify(movie),200)
-
-    res = make_response(jsonify({"error":"movie ID not found"}),400)
-    return res
+# Écrit les données des films dans le fichier JSON.
+def write(movies):
+    data = {"movies": movies}
+    with open('./databases/movies.json', 'w') as f:
+        json.dump(data, f, indent=4)
 
 if __name__ == "__main__":
     #p = sys.argv[1]
-    print("Server running in port %s"%(PORT))
+    print("Server running in port %s"% PORT)
     app.run(host=HOST, port=PORT)

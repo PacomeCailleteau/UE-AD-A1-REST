@@ -1,16 +1,10 @@
-from http.client import responses
-
 import yaml
-from flask import Flask, render_template, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response
 import requests
 import json
 
-from starlette.config import undefined
-from werkzeug.exceptions import NotFound
-
 app = Flask(__name__)
 
-# A VOIR POUR METTRE DANS UN .ENV ?
 PORT = 3203
 HOST = '0.0.0.0'
 BOOKING_SERVICE_URL = "http://localhost:3201/bookings/"
@@ -25,14 +19,14 @@ with open("UE-archi-distribuees-User-1.0.0-resolved.yaml", "r") as f:
 def home():
     return "<h1 style='color:blue'>Welcome to the User service!</h1>"
 
-
+# Retourne la liste des utilisateurs au format JSON.
 @app.route("/users", methods=['GET'])
 def get_users():
     json = jsonify(users)
     response = make_response(json, 200)
     return response
 
-
+# Ajoute un nouvel utilisateur si l'ID n'existe pas déjà.
 @app.route("/users", methods=['POST'])
 def add_user():
     req = request.get_json()
@@ -46,7 +40,7 @@ def add_user():
 
     return make_response(jsonify({"message": "user added"}, req), 200)
 
-
+# Retourne les détails d'un utilisateur correspondant à l'ID donné.
 @app.route("/users/<userid>", methods=['GET'])
 def get_user_byid(userid):
     for user in users:
@@ -54,8 +48,7 @@ def get_user_byid(userid):
             return make_response(jsonify(user), 200)
     return make_response(jsonify({'error': 'User not found', "id": userid}), 404)
 
-
-#Voir pour une meilleure gestion des erreurs
+# Met à jour les détails d'un utilisateur correspondant à l'ID donné.
 @app.route("/users/<userid>", methods=['PUT'])
 def update_user_byid(userid):
     req = request.get_json()
@@ -68,7 +61,7 @@ def update_user_byid(userid):
             return make_response(jsonify({"message": "user updated"},req), 200)
     return make_response(jsonify({'error': 'User not found', "id": userid}), 404)
 
-
+# Supprime un utilisateur correspondant à l'ID donné.
 @app.route("/users/<userid>", methods=['DELETE'])
 def del_user_byid(userid):
     for user in users:
@@ -80,15 +73,13 @@ def del_user_byid(userid):
     res = make_response(jsonify({"error":"user ID not found", "id": userid}),400)
     return res
 
-
-# Tous les users triés par leur dernière activité
+# Retourne les utilisateurs triés par date de dernière activité.
 @app.route("/users/bylastactive", methods=['GET'])
 def get_user_bylastactive():
     json = jsonify(users)
     sorted_users_bylastactive = sorted(users, key=lambda user: user.get("last_active", 0))
     response = make_response(sorted_users_bylastactive, 200)
     return response
-
 
 # récupérer tous les bookings d'un user (lien avec booking)
 @app.route("/users/<userid>/bookings", methods=['GET'])
@@ -107,7 +98,7 @@ def get_user_bookings(userid):
     return
 
 
-# même chose, mais en récupérant aussi les infos des films (lien avec booking et movie)
+# même chose que get_user_bookings, mais en récupérant aussi les infos des films (lien avec booking et movie)
 @app.route("/users/<userid>/bookings/movies", methods=['GET'])
 def get_user_bookings_movies(userid):
     for user in users:
@@ -138,7 +129,7 @@ def get_user_bookings_movies(userid):
                 return make_response(jsonify({"error": "Error contacting Booking service", "details": str(e)}), 500)
     return
 
-
+# Retourne une liste d'aide.
 @app.route("/help", methods=['GET'])
 def get_help():
     paths = openapi_spec.get("paths", {})
@@ -162,5 +153,5 @@ def write(users):
 
 
 if __name__ == "__main__":
-    print("Server running in port %s" % (PORT))
+    print("Server running in port %s" % PORT)
     app.run(host=HOST, port=PORT)

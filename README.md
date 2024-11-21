@@ -16,6 +16,24 @@ Pour le microservice User, nous avons décidé d'implémenter les fonctionnalit�
 - ``GET - /users/{userid}/bookings/movies`` Récupérer les films réservés par un utilisateur et les informations associées aux films
 - ``GET - /help`` Récupérer la liste des routes disponibles
 
+Pour le microservice Movie, nous avons décidé d'implémenter les fonctionnalités suivantes :
+- ``GET - /json`` Récupérer tous les films
+- ``GET - /movies/{movieid}`` Récupérer un film via son id
+- ``GET - /movies/rate`` Récupérer les films triés par leur note (best or worst)
+- ``GET - /moviebytitle`` Récupérer un film via son titre
+- ``GET - /moviesbydirector`` Récupérer les films d'un réalisateur
+- ``POST - /addmovie/{movieid}`` Créer un film
+- ``PUT - /movies/{movieid}/{rate}`` Mettre à jour la note d'un film
+- ``DELETE - /movies/{movieid}`` Supprimer un film via son id
+
+Pour le microservice Showtime, nous avons décidé d'implémenter les fonctionnalités suivantes :
+- ``GET - /showtimes`` Récupérer tous les horaires
+- ``GET - /showtimes/{date}`` Récupérer les horaires d'une date donnée
+
+Pour le microservice Booking, nous avons décidé d'implémenter les fonctionnalités suivantes :
+- ``GET - /bookings`` Récupérer toutes les réservations
+- ``GET - /bookings/{userid}`` Récupérer les réservations d'un utilisateur
+- ``POST - /bookings/{userid}`` Créer une réservation pour un utilisateur
 
 ## Lancer le projet
 Avant de lancer le script, il faut télécharger les dépendances du fichier requirements.txt.  
